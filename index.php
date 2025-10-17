@@ -39,60 +39,36 @@
         <h2 class="section-title">Produtos em Destaque</h2>
         <div class="products-grid">
 <!-- Produto 1 -->
-<div class="product-card fade-in" data-product-id="vestido-floral">
-    <img src="https://images.unsplash.com/photo-1581044777550-4cfa60707c03?ixlib=rb-4.0.3&auto=format&fit=crop&w=686&q=80" alt="Vestido Floral" class="product-image">
+ <?php
+ require_once 'produtos/config.php';
+ try{
+    $pdo->beginTransaction();
+    $stmt = $pdo->prepare("SELECT * FROM produtos, produtos_variacoes WHERE produtos.id = produtos_variacoes.id_produto LIMIT 8");
+    $stmt->execute();
+    $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $pdo->commit();
+    foreach ($produtos as $produto) {
+echo '
+<div class="product-card fade-in" data-product-id='.$produto['nome'].'>
+    <img src="'.$produto['imagem'].'"class="product-image">
     <div class="product-info">
-        <h3 class="product-title">Vestido Floral</h3>
+        <h3 class="product-title">'.$produto['nome']." ".$produto['tamanho'].'</h3>
         <div class="product-price">
             <span class="old-price">R$ 189,90</span>
-            <span class="new-price">R$ 99,90</span>
+            <span class="new-price">'.$produto['preco'].'</span>
             <span class="discount">-47%</span>
         </div>
         <button class="btn">Comprar</button>
     </div>
-</div>
-
-<!-- Produto 2 -->
-<div class="product-card fade-in delay-1" data-product-id="blusa-trico">
-    <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80" alt="Blusa de Tricô" class="product-image">
-    <div class="product-info">
-        <h3 class="product-title">Blusa de Tricô</h3>
-        <div class="product-price">
-            <span class="old-price">R$ 129,90</span>
-            <span class="new-price">R$ 69,90</span>
-            <span class="discount">-46%</span>
-        </div>
-        <button class="btn">Comprar</button>
-    </div>
-</div>
-
-<!-- Produto 3 -->
-<div class="product-card fade-in delay-2" data-product-id="calca-jeans">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc8BbphDgxsRBVgbH9SscARqWuxS483tDYaA&s" alt="Calça Jeans" class="product-image">
-    <div class="product-info">
-        <h3 class="product-title">Calça Jeans Skinny</h3>
-        <div class="product-price">
-            <span class="old-price">R$ 159,90</span>
-            <span class="new-price">R$ 89,90</span>
-            <span class="discount">-44%</span>
-        </div>
-        <button class="btn">Comprar</button>
-    </div>
-</div>
-
-<!-- Produto 4 -->
-<div class="product-card fade-in delay-3" data-product-id="casaco-inverno">
-    <img src="https://images.unsplash.com/photo-1589810264340-0ce27bfbf751?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80" alt="Casaco de Inverno" class="product-image">
-    <div class="product-info">
-        <h3 class="product-title">Casaco de Inverno</h3>
-        <div class="product-price">
-            <span class="old-price">R$ 299,90</span>
-            <span class="new-price">R$ 149,90</span>
-            <span class="discount">-50%</span>
-        </div>
-        <button class="btn">Comprar</button>
-    </div>
-</div>
+</div>';
+    }
+ }
+    catch (Exception $e){
+        $pdo->rollBack();
+        echo "Failed: " . $e->getMessage();
+    }
+ 
+?>
         </div>
     </section>
 
