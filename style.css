@@ -359,6 +359,10 @@ body {
 
 /* Responsividade */
 @media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
     .nav-links {
         display: none;
         position: fixed;
@@ -374,11 +378,8 @@ body {
     }
 
     .nav-links.active {
+        display: flex;
         right: 0;
-    }
-
-    .hamburger {
-        display: flex; /* Corrige a visibilidade do hamburger em mobile */
     }
 
     .hero h1 {
