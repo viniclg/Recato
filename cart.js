@@ -1,15 +1,15 @@
-function addToCart(id, name, price, image) {
-    console.log('Tentando adicionar:', { id, name, price, image });
+function addToCart(produtoId, tamanho, cor, name, price, image) {
+    console.log('Tentando adicionar:', { produtoId, tamanho, cor, name, price, image });
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = cart.find(item => item.id === id);
+    const existingItem = cart.find(item => item.produtoId === produtoId && item.tamanho === tamanho && item.cor === cor);
     if (existingItem) {
         existingItem.qty += 1;
     } else {
-        cart.push({ id, name, price, image, qty: 1 });
+        cart.push({ produtoId, tamanho, cor, name, price, image, qty: 1 });
     }
     localStorage.setItem('cart', JSON.stringify(cart));
     console.log('Carrinho atual:', cart);
-    alert(`${name} adicionado ao carrinho! 🛒`);
+    alert(`${name} (${tamanho}, ${cor}) adicionado ao carrinho! 🛒`);
     updateCartCounter();
 }
 

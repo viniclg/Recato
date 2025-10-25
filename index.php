@@ -35,42 +35,45 @@
     </section>
 
     <!-- Seção de produtos -->
-    <section class="products" id="products">
-        <h2 class="section-title">Produtos em Destaque</h2>
-        <div class="products-grid">
-<!-- Produto 1 -->
- <?php
- require_once 'produtos/config.php';
- try{
-    $pdo->beginTransaction();
-    $stmt = $pdo->prepare("SELECT * FROM produtos, produtos_variacoes WHERE produtos.id = produtos_variacoes.id_produto LIMIT 8");
-    $stmt->execute();
-    $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $pdo->commit();
-    foreach ($produtos as $produto) {
-echo '
-<div class="product-card fade-in" data-product-id='.$produto['nome'].'>
-    <img src="'.$produto['imagem'].'"class="product-image">
-    <div class="product-info">
-        <h3 class="product-title">'.$produto['nome']." ".$produto['tamanho'].'</h3>
-        <div class="product-price">
-            <span class="old-price">R$ 189,90</span>
-            <span class="new-price">'.$produto['preco'].'</span>
-            <span class="discount">-47%</span>
-        </div>
-        <button class="btn">Comprar</button>
+<section class="products" id="products">
+    <h2 class="section-title">Produtos em Destaque</h2>
+    <div class="products-grid">
+        <?php
+        require_once 'produtos/config.php';
+        try {
+            $pdo->beginTransaction();
+            // Usar LEFT JOIN para pegar o primeiro produto e sua variação
+            $stmt = $pdo->prepare("SELECT p.*, pv.tamanho, pv.cor, pv.estoque, pv.imagem 
+                                   FROM produtos p 
+                                   LEFT JOIN produtos_variacoes pv ON p.id = pv.id_produto 
+                                   WHERE p.ativo = 1 
+                                   GROUP BY p.id 
+                                   LIMIT 8");
+            $stmt->execute();
+            $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $pdo->commit();
+
+            foreach ($produtos as $produto) {
+                echo '<div class="product-card fade-in" data-product-id="' . htmlspecialchars($produto['id']) . '">
+                        <a href="produto.php?id=' . htmlspecialchars($produto['id']) . '">
+                            <img src="' . htmlspecialchars($produto['imagem']) . '" alt="' . htmlspecialchars($produto['nome']) . '" class="product-image">
+                        </a>
+                        <div class="product-info">
+                            <h3 class="product-title">' . htmlspecialchars($produto['nome']) . '</h3>
+                            <div class="product-price">
+                                <span class="new-price">R$ ' . number_format($produto['preco'], 2, ',', '.') . '</span>
+                            </div>
+                            <a href="produto.php?id=' . htmlspecialchars($produto['id']) . '" class="btn">Ver Detalhes</a>
+                        </div>
+                    </div>';
+            }
+        } catch (PDOException $e) {
+            echo "Erro: " . $e->getMessage();
+            $pdo->rollBack();
+        }
+        ?>
     </div>
-</div>';
-    }
- }
-    catch (Exception $e){
-        $pdo->rollBack();
-        echo "Failed: " . $e->getMessage();
-    }
- 
-?>
-        </div>
-    </section>
+</section>
 
     <!-- Seção de ofertas -->
     <section class="offers" id="offers">
